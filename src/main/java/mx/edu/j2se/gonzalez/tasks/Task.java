@@ -43,7 +43,7 @@ public class Task {
         this.active=active;
     }
     public int getTime(){
-        return (time==-1)?start:time;
+        return isRepeated()?start:time;
     }
     public void setTime(int time){
         if(this.time ==-1)
@@ -52,13 +52,13 @@ public class Task {
             this.time=time;
     }
     public int getStartTime(){
-        return (start==-1)?time:start;
+        return isRepeated()?time:start;
     }
     public int getEndTime(){
-        return (end==-1)?time:end;
+        return isRepeated()?time:end;
     }
     public int getRepeatInterval(){
-        return (interval==-1)?0:interval;
+        return isRepeated()?0:interval;
     }
 
     /**
@@ -86,13 +86,18 @@ public class Task {
      * anymore, the method will return -1
      */
     public int nextTimeAfter(int current){
-        int i=start;
-        while(i<end){
-            i += interval;
-            if(i>current){
-                return i;
+        if (!isActive()){return -1;}
+        if (isRepeated()){
+            int i = start;
+            while (i < end) {
+                if (i > current) {
+                    return i;
+                }
+                i += interval;
             }
+            return -1;
         }
-        return -1;
+        else
+            return (current < time)?time:-1;
     }
 }
