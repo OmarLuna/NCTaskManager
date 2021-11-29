@@ -12,8 +12,10 @@ public class Task {
      *
      * @param title Title of the task
      * @param time The time the task will be run
+     * @throws IllegalArgumentException-if the time is negative
      */
-    public Task(String title, int time){
+    public Task(String title, int time) throws IllegalArgumentException{
+        if(time < 0){throw new IllegalArgumentException();}
         this.title=title;
         this.time=time;
     }
@@ -23,8 +25,11 @@ public class Task {
      * @param start Time when teh task starts
      * @param end Time when the task ends
      * @param interval The intervals the task should be repeated
+     * @throws IllegalArgumentException-if the start,end or interval
+     * time are negative or the start time is bigger than the end time
      */
-    public Task(String title, int start, int end, int interval){
+    public Task(String title, int start, int end, int interval) throws IllegalArgumentException{
+        if(start < 0 || end < 0 || interval < 0 || start > end){throw new IllegalArgumentException();}
         this.title=title;
         this.start=start;
         this.end=end;
@@ -45,11 +50,21 @@ public class Task {
     public int getTime(){
         return isRepeated()?start:time;
     }
-    public void setTime(int time){
-        if(this.time ==-1)
-            this.start=time;
-        else
-            this.time=time;
+
+    /**
+     * Sets a new time for the task, if the task is repetitive
+     * it becomes non-repetitive
+     * @param time The new time
+     * @throws IllegalArgumentException-if the time is negative
+     */
+    public void setTime(int time) throws IllegalArgumentException{
+        if (time < 0){throw new IllegalArgumentException();}
+        if(this.isRepeated()) {
+            this.start = -1;
+            this.end = -1;
+            this.interval = -1;
+        }
+        this.time = time;
     }
     public int getStartTime(){
         return isRepeated()?time:start;
@@ -67,8 +82,12 @@ public class Task {
      * @param start The time the task starts
      * @param end The time the task ends
      * @param interval The interval of the task
+     * @throws IllegalArgumentException-if one of the arguments is negative or
+     * the start time is bigger than the end time
      */
-    public void setTime(int start, int end, int interval){
+    public void setTime(int start, int end, int interval) throws IllegalArgumentException{
+        if(start < 0 || end < 0 || interval < 0 || start > end)
+            throw new IllegalArgumentException();
         this.time=-1;
         this.start=start;
         this.end=end;
@@ -84,8 +103,10 @@ public class Task {
      * @return Returns the next start time of the task execution after the current time.
      * If after the specified time the task is not executed
      * anymore, the method will return -1
+     * @throws IllegalArgumentException-if the current time is negative
      */
-    public int nextTimeAfter(int current){
+    public int nextTimeAfter(int current) throws IllegalArgumentException{
+        if (current < 0)throw new IllegalArgumentException();
         if (!isActive()){return -1;}
         if (isRepeated()){
             int i = start;
