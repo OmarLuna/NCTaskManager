@@ -1,10 +1,8 @@
 package mx.edu.j2se.gonzalez.tasks.tests;
-import mx.edu.j2se.gonzalez.tasks.ArrayTaskList;
+
 import mx.edu.j2se.gonzalez.tasks.Task;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.concurrent.ScheduledExecutorService;
 
 public class TaskTest {
     @Test
@@ -21,38 +19,29 @@ public class TaskTest {
         Assert.assertEquals(alarm.nextTimeAfter(8), 10);
         Assert.assertEquals(alarm.nextTimeAfter(12), -1);
 
-        Task meal = new Task("Dinner", 6);
+    }
 
-        Assert.assertFalse(meal.isActive());
-        meal.setActive(true);
-        Assert.assertTrue(meal.isActive());
-
-        Assert.assertEquals(meal.nextTimeAfter(5),6);
-
-        ArrayTaskList scheduler = new ArrayTaskList();
-
-        Assert.assertEquals(scheduler.size(),0);
-        scheduler.add(alarm);
-        scheduler.add(meal);
-        Assert.assertEquals(scheduler.size(),2);
-
-        ArrayTaskList tomorrow = scheduler.incoming(24,48);
-        Assert.assertEquals(tomorrow.size(),0);
-
-        Task exercise = new Task("Exercise",30);
-        exercise.setActive(true);
-        Assert.assertEquals(exercise.nextTimeAfter(24),30);
-        scheduler.add(exercise);
-
-        Assert.assertEquals(scheduler.size(),3);
-        tomorrow = scheduler.incoming(24,48);
-        Assert.assertEquals(tomorrow.size(),1);
-
-        Assert.assertSame(scheduler.getTask(0),alarm);
-
-        scheduler.remove(alarm);
-        Assert.assertEquals(scheduler.size(),2);
-        Assert.assertSame(scheduler.getTask(0),meal);
+    @Test
+    public void testException(){
+        try {
+            Task alarm1 = new Task("Alarm",-1);
+        }
+        catch (IllegalArgumentException e){
+            System.out.println("Illegal Argument for non-repetitive task");
+        }
+        try {
+            Task alarm2 = new Task("Alarm",0,-1,0);
+        }
+        catch (IllegalArgumentException e){
+            System.out.println("Illegal Argument for repetitive task");
+        }
+        try {
+            Task alarm3 = new Task("Alarm",5);
+            alarm3.setTime(-1);
+        }
+        catch (IllegalArgumentException e){
+            System.out.println("Illegal Argument for setTime");
+        }
 
     }
 

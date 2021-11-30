@@ -82,7 +82,6 @@ public class ArrayTaskList {
         else {
             ArrayTaskList tmpArrayList = new ArrayTaskList();
             for (int i = 0; i < this.size(); i++) {
-                //System.out.println(taskList[i].getTitle());
                 if (taskList[i].nextTimeAfter(from) <= to && taskList[i].nextTimeAfter(from) != -1)
                     tmpArrayList.add(taskList[i]);
             }

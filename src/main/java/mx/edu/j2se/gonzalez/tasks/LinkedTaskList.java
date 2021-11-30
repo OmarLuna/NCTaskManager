@@ -99,7 +99,7 @@ public class LinkedTaskList {
      */
     public LinkedTaskList incoming(int from, int to) throws IllegalArgumentException{
         if(from >= to || from < 0){throw new IllegalArgumentException();}
-        if (size() < 1){return null;}
+        if (this.size() < 1){return null;}
         else {
             Node tmpNode = first;
             LinkedTaskList tmpLTL = new LinkedTaskList();
