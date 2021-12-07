@@ -1,5 +1,6 @@
 package mx.edu.j2se.gonzalez.tasks.tests;
 
+import mx.edu.j2se.gonzalez.tasks.AbstractTaskList;
 import mx.edu.j2se.gonzalez.tasks.ArrayTaskList;
 import mx.edu.j2se.gonzalez.tasks.Task;
 import org.junit.Assert;
@@ -21,7 +22,7 @@ public class ArrayTaskListTest {
         scheduler.add(meal);
         Assert.assertEquals(scheduler.size(),2);
 
-        ArrayTaskList tomorrow = scheduler.incoming(24,48);
+        AbstractTaskList tomorrow = scheduler.incoming(24,48);
         Assert.assertNull(tomorrow);                        //No tasks tomorrow
 
         Task exercise = new Task("Exercise",30);

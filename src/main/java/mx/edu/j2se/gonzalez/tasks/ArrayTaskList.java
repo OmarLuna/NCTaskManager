@@ -1,15 +1,17 @@
 package mx.edu.j2se.gonzalez.tasks;
 
 
-public class ArrayTaskList {
+public class ArrayTaskList extends AbstractTaskList{
     Task[] taskList;
     int length =0;
+    ListTypes.types typeList = ListTypes.types.ARRAY;
 
     /**
      * Adds a task to the list.
      * @param task The task that will be added.
      * @throws NullPointerException-if the task is null
      */
+    @Override
     public void add(Task task) throws NullPointerException{
         if(task == null){throw new NullPointerException();}
         length += 1;
@@ -27,6 +29,7 @@ public class ArrayTaskList {
      * If the task wasn't found returns false.
      * @throws NullPointerException-if the task is null
      */
+    @Override
     public boolean remove(Task task) throws NullPointerException{
         if (task == null){throw new NullPointerException();}
         if (size() >= 1) {
@@ -47,12 +50,6 @@ public class ArrayTaskList {
         return false;
     }
 
-    /**
-     * Returns the number of tasks in the list
-     */
-    public int size(){
-        return length;
-    }
 
     /**
      * @param index Index of the task
@@ -60,22 +57,15 @@ public class ArrayTaskList {
      * @throws IndexOutOfBoundsException-if the index is bigger than the task list
      * @throws IllegalArgumentException-if the index is negative
      */
+    @Override
     public Task getTask(int index) throws IndexOutOfBoundsException, IllegalArgumentException{
         if (index>= size()){throw new IndexOutOfBoundsException();}
         if(index<0){throw new IllegalArgumentException();}
         return taskList[index];
     }
 
-    /**
-     * Determines what task will be active in the interval of time.
-     * @param from The start of the interval
-     * @param to The end of the interval
-     * @return Returns a subset of tasks that are scheduled for execution
-     * at least once after the "from" time, and not later than the "to" time.
-     * If the task list or the subset list have no elements returns null.
-     * @throws IllegalArgumentException-if the 'from' time is bigger than the
-     * 'to' time or either argument is negative
-     */
+    /*
+    @Override
     public ArrayTaskList incoming(int from, int to) throws IllegalArgumentException{
         if(from >= to || from < 0){throw new IllegalArgumentException();}
         if(size()<1){return  null;}
@@ -87,5 +77,5 @@ public class ArrayTaskList {
             }
             return tmpArrayList.size()==0?null:tmpArrayList;
         }
-    }
+    }*/
 }
