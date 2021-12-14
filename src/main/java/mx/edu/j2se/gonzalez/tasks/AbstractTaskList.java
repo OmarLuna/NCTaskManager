@@ -58,4 +58,5 @@ public abstract class AbstractTaskList {
             return tmpAbstractList.size()==0?null:tmpAbstractList;
         }
     }
+
 }

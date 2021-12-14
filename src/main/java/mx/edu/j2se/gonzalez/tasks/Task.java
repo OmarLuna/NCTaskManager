@@ -1,6 +1,6 @@
 package mx.edu.j2se.gonzalez.tasks;
 
-public class Task {
+public class Task implements Cloneable{
     String title;
     int time=-1;
     int start=-1;
@@ -120,5 +120,52 @@ public class Task {
         }
         else
             return (current < time)?time:-1;
+    }
+
+    @Override
+    public String toString(){
+        String ret;
+        if(isRepeated()){
+            ret = "Task: "+title+" Start: "+start+" End: "+end+
+                    " Interval: "+interval+(isActive()?"is active":"is not active");
+        }else{
+            ret = "Task: "+title+" Time: "+time+(isActive()?"is active":"is not active");
+        }
+        return ret;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj)return true;
+        if (obj == null)return false;
+        if(obj.getClass()!= getClass())return false;
+        Task task = (Task) obj;
+        if(task.isRepeated()){
+            return this.title.equals(task.title)&&
+                    this.start== task.start&&
+                    this.end == task.end&&
+                    this.interval == task.interval&&
+                    this.isActive() == task.isActive();
+        }else{
+            return this.title.equals(task.title)&&
+                    this.time == task.time&&
+                    this.isActive()==task.isActive();
+        }
+    }
+
+
+    @Override
+    public Task clone() {
+        try {
+            Task clone = (Task) super.clone();
+            clone.title = title;
+            clone.time = time;
+            clone.start = start;
+            clone.end = end;
+            clone.active = active;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

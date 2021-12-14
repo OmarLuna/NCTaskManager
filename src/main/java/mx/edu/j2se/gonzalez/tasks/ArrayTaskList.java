@@ -1,10 +1,14 @@
 package mx.edu.j2se.gonzalez.tasks;
 
+import java.util.Iterator;
 
-public class ArrayTaskList extends AbstractTaskList{
+public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cloneable {
     Task[] taskList;
-    int length =0;
-    ListTypes.types typeList = ListTypes.types.ARRAY;
+
+    public ArrayTaskList(){
+        this.length = 0;
+        this.typeList = ListTypes.types.ARRAY;
+    }
 
     /**
      * Adds a task to the list.
@@ -64,18 +68,63 @@ public class ArrayTaskList extends AbstractTaskList{
         return taskList[index];
     }
 
-    /*
     @Override
-    public ArrayTaskList incoming(int from, int to) throws IllegalArgumentException{
-        if(from >= to || from < 0){throw new IllegalArgumentException();}
-        if(size()<1){return  null;}
-        else {
-            ArrayTaskList tmpArrayList = new ArrayTaskList();
-            for (int i = 0; i < this.size(); i++) {
-                if (taskList[i].nextTimeAfter(from) <= to && taskList[i].nextTimeAfter(from) != -1)
-                    tmpArrayList.add(taskList[i]);
-            }
-            return tmpArrayList.size()==0?null:tmpArrayList;
+    public Iterator<Task> iterator() {
+        ArrayTaskList.ArrayListIterator i = new ArrayTaskList.ArrayListIterator();
+        return i.iterator();
+    }
+
+    protected class ArrayListIterator implements Iterable<Task>{
+        private int pos;
+        public ArrayListIterator(){ pos = 0;}
+        @Override
+        public Iterator<Task> iterator() {
+            return new Iterator<Task>() {
+                @Override
+                public boolean hasNext() {
+                    return size()-1<pos;
+                }
+
+                @Override
+                public Task next() {
+                    return taskList[pos++];
+                }
+            };
         }
-    }*/
+    }
+
+    @Override
+    public String toString(){
+        String s = "Array List ";
+        for (Task task: taskList) s += task.toString();
+        return s;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj)return true;
+        if(obj == null)return false;
+        if(obj.getClass() != getClass())return false;
+        ArrayTaskList ATL = (ArrayTaskList) obj;
+        Iterator<Task> it1 = this.iterator();
+        Iterator<Task> it2 = ATL.iterator();
+        while (it1.hasNext() && it2.hasNext()){
+            if(it1.next() != it2.next())
+                return false;
+        }
+        return this.taskList[0].equals(ATL.taskList[0]);
+    }
+
+    @Override
+    public ArrayTaskList clone() {
+        try {
+            ArrayTaskList clone = (ArrayTaskList) super.clone();
+            for (Task task: taskList) {
+                clone.add(task.clone());
+            }
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

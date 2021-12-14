@@ -1,13 +1,21 @@
 package mx.edu.j2se.gonzalez.tasks;
 
-public class LinkedTaskList extends AbstractTaskList{
-    int length=0;
+import sun.awt.image.ImageWatched;
+
+import javax.sound.sampled.Line;
+import java.util.Iterator;
+
+public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,Cloneable{
     Node first;
     Node last;
-    ListTypes.types typeList = ListTypes.types.LINKED;
     private class Node {
         Task task;
         Node next;
+    }
+
+    public LinkedTaskList(){
+        this.length = 0;
+        this.typeList = ListTypes.types.LINKED;
     }
 
     /**
@@ -29,8 +37,8 @@ public class LinkedTaskList extends AbstractTaskList{
                 last.next = this.new Node();
                 last = last.next;
                 last.task = task;
-                last.next = first;
             }
+            last.next = first;
         }
     }
 
@@ -87,19 +95,70 @@ public class LinkedTaskList extends AbstractTaskList{
         }
     }
 
-    /*
-    public LinkedTaskList incoming(int from, int to) throws IllegalArgumentException{
-        if(from >= to || from < 0){throw new IllegalArgumentException();}
-        if (this.size() < 1){return null;}
-        else {
-            Node tmpNode = first;
-            LinkedTaskList tmpLTL = new LinkedTaskList();
-            for (int i=0;i<this.size();i++){
-                if(tmpNode.task.nextTimeAfter(from) <= to && tmpNode.task.nextTimeAfter(from)!=-1)
-                    tmpLTL.add(tmpNode.task);
-                tmpNode = tmpNode.next;
-            }
-            return tmpLTL.size()==0?null:tmpLTL;
+    @Override
+    public Iterator<Task> iterator() {
+        LinkedListIterator i = new LinkedListIterator();
+        return i.iterator();
+    }
+
+    protected class LinkedListIterator implements Iterable<Task>{
+        Node current;
+        public LinkedListIterator(){
+            this.current = first;
         }
-    }*/
+        @Override
+        public Iterator<Task> iterator() {
+            return new Iterator<Task>() {
+                @Override
+                public boolean hasNext() {
+                    return current.next!=first;
+                }
+
+                @Override
+                public Task next() {
+                    current = current.next;
+                    return current.task;
+                }
+            };
+        }
+    }
+
+    @Override
+    public String toString(){
+        String s = "Linked List ";
+        for (Task task: this) {
+            s += task.toString();
+        }
+        return s;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj)return true;
+        if(obj == null)return false;
+        if(obj.getClass() != getClass())return false;
+        LinkedTaskList ATL = (LinkedTaskList) obj;
+        Iterator<Task> it1 = this.iterator();
+        Iterator<Task> it2 = ATL.iterator();
+        while (it1.hasNext() && it2.hasNext()){
+            if(it1.next() != it2.next())
+                return false;
+        }
+        return this.first.task.equals(ATL.first.task);
+    }
+
+    @Override
+    public LinkedTaskList clone() {
+        try {
+            LinkedTaskList clone = (LinkedTaskList) super.clone();
+            Iterator<Task> it = this.iterator();
+            clone.add(first.task.clone());
+            while (it.hasNext()) {
+                clone.add(it.next().clone());
+            }
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }
