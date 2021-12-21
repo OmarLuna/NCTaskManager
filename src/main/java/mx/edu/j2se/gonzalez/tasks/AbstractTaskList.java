@@ -1,6 +1,8 @@
 package mx.edu.j2se.gonzalez.tasks;
 
-public abstract class AbstractTaskList {
+import java.util.stream.Stream;
+
+public abstract class AbstractTaskList{
     int length;
     ListTypes.types typeList;
 
@@ -45,7 +47,7 @@ public abstract class AbstractTaskList {
      * @throws IllegalArgumentException-if the 'from' time is bigger than the
      * 'to' time or either argument is negative
      */
-    public AbstractTaskList incoming(int from, int to) throws IllegalArgumentException{
+    public final AbstractTaskList incoming(int from, int to) throws IllegalArgumentException{
         if(from >= to || from < 0){throw new IllegalArgumentException();}
         if(size()<1){return  null;}
         else {
@@ -59,4 +61,6 @@ public abstract class AbstractTaskList {
         }
     }
 
+
+    abstract Stream<Task> getStream();
 }

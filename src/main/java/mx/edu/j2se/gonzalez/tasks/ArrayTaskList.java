@@ -1,6 +1,8 @@
 package mx.edu.j2se.gonzalez.tasks;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cloneable {
     Task[] taskList;
@@ -10,11 +12,6 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
         this.typeList = ListTypes.types.ARRAY;
     }
 
-    /**
-     * Adds a task to the list.
-     * @param task The task that will be added.
-     * @throws NullPointerException-if the task is null
-     */
     @Override
     public void add(Task task) throws NullPointerException{
         if(task == null){throw new NullPointerException();}
@@ -26,13 +23,6 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
         taskList=tmpTaskList;
     }
 
-    /**
-     * Removes a task from the array of task
-     * @param task The task that will be removed.
-     * @return Returns true if the task was removed from the list.
-     * If the task wasn't found returns false.
-     * @throws NullPointerException-if the task is null
-     */
     @Override
     public boolean remove(Task task) throws NullPointerException{
         if (task == null){throw new NullPointerException();}
@@ -54,18 +44,16 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
         return false;
     }
 
-
-    /**
-     * @param index Index of the task
-     * @return An object task.
-     * @throws IndexOutOfBoundsException-if the index is bigger than the task list
-     * @throws IllegalArgumentException-if the index is negative
-     */
     @Override
     public Task getTask(int index) throws IndexOutOfBoundsException, IllegalArgumentException{
         if (index>= size()){throw new IndexOutOfBoundsException();}
         if(index<0){throw new IllegalArgumentException();}
         return taskList[index];
+    }
+
+    @Override
+    Stream<Task> getStream() {
+        return Arrays.stream(taskList);
     }
 
     @Override
@@ -95,9 +83,9 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
 
     @Override
     public String toString(){
-        String s = "Array List ";
-        for (Task task: taskList) s += task.toString();
-        return s;
+        StringBuilder s = new StringBuilder("Array List ");
+        for (Task task: taskList) s.append(task.toString());
+        return s.toString();
     }
 
     @Override

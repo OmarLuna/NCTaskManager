@@ -1,9 +1,7 @@
 package mx.edu.j2se.gonzalez.tasks;
 
-import sun.awt.image.ImageWatched;
-
-import javax.sound.sampled.Line;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,Cloneable{
     Node first;
@@ -18,11 +16,6 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
         this.typeList = ListTypes.types.LINKED;
     }
 
-    /**
-     * Adds a task to the list.
-     * @param task The task that will be added.
-     * @throws NullPointerException-if the task is null
-     */
     @Override
     public void add(Task task) throws NullPointerException{
         if (task == null){throw new NullPointerException();}
@@ -42,12 +35,6 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
         }
     }
 
-    /**Removes a task from the array of task
-     * @param task The task that will be removed.
-     * @return Returns true if the task was removed from the list.
-     * If the task wasn't found returns false.
-     * @throws NullPointerException-if the task is null
-     */
     @Override
     public boolean remove(Task task) throws NullPointerException{
         if(task == null){throw new NullPointerException();}
@@ -74,13 +61,6 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
         }
     }
 
-
-    /**
-     * @param index Index of the task
-     * @return An object task.
-     * @throws IndexOutOfBoundsException-if the index is bigger than the task list
-     * @throws IllegalArgumentException-if the index is negative
-     */
     @Override
     public Task getTask(int index) throws IndexOutOfBoundsException{
         if(index >= size() || index < 0){throw new IndexOutOfBoundsException();}
@@ -93,6 +73,17 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
             }
             return tmpNode.task;
         }
+    }
+
+    @Override
+    public Stream<Task> getStream(){
+        Stream.Builder<Task> builder = Stream.builder();
+        Iterator<Task> it = this.iterator();
+        builder.add(first.task);
+        while(it.hasNext()){
+            builder.add(it.next());
+        }
+        return builder.build();
     }
 
     @Override
@@ -125,11 +116,11 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
 
     @Override
     public String toString(){
-        String s = "Linked List ";
+        StringBuilder s = new StringBuilder("Linked List ");
         for (Task task: this) {
-            s += task.toString();
+            s.append(task.toString());
         }
-        return s;
+        return s.toString();
     }
 
     @Override
