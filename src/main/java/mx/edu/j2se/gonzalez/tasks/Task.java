@@ -1,10 +1,12 @@
 package mx.edu.j2se.gonzalez.tasks;
 
+import java.time.LocalDateTime;
+
 public class Task implements Cloneable{
     String title;
-    int time=-1;
-    int start=-1;
-    int end=-1;
+    LocalDateTime time;
+    LocalDateTime start;
+    LocalDateTime end;
     int interval=-1;
     boolean active=false;
 
@@ -14,8 +16,8 @@ public class Task implements Cloneable{
      * @param time The time the task will be run
      * @throws IllegalArgumentException-if the time is negative
      */
-    public Task(String title, int time) throws IllegalArgumentException{
-        if(time < 0){throw new IllegalArgumentException();}
+    public Task(String title, LocalDateTime time) throws NullPointerException{
+        if(time == null){throw new NullPointerException();}
         this.title=title;
         this.time=time;
     }
@@ -28,8 +30,9 @@ public class Task implements Cloneable{
      * @throws IllegalArgumentException-if the start,end or interval
      * time are negative or the start time is bigger than the end time
      */
-    public Task(String title, int start, int end, int interval) throws IllegalArgumentException{
-        if(start < 0 || end < 0 || interval < 0 || start > end){throw new IllegalArgumentException();}
+    public Task(String title, LocalDateTime start, LocalDateTime end, int interval)
+            throws IllegalArgumentException{
+        if(start == null || end == null || interval < 0 || start.isAfter(end)){throw new IllegalArgumentException();}
         this.title=title;
         this.start=start;
         this.end=end;
@@ -47,7 +50,7 @@ public class Task implements Cloneable{
     public void setActive(boolean active){
         this.active=active;
     }
-    public int getTime(){
+    public LocalDateTime getTime(){
         return isRepeated()?start:time;
     }
 
@@ -57,23 +60,23 @@ public class Task implements Cloneable{
      * @param time The new time
      * @throws IllegalArgumentException-if the time is negative
      */
-    public void setTime(int time) throws IllegalArgumentException{
-        if (time < 0){throw new IllegalArgumentException();}
+    public void setTime(LocalDateTime time) throws NullPointerException{
+        if (time == null){throw new NullPointerException();}
         if(this.isRepeated()) {
-            this.start = -1;
-            this.end = -1;
+            this.start = null;
+            this.end = null;
             this.interval = -1;
         }
         this.time = time;
     }
-    public int getStartTime(){
+    public LocalDateTime getStartTime(){
         return isRepeated()?time:start;
     }
-    public int getEndTime(){
+    public LocalDateTime getEndTime(){
         return isRepeated()?time:end;
     }
     public int getRepeatInterval(){
-        return isRepeated()?0:interval;
+        return isRepeated()?interval:-1;
     }
 
     /**
@@ -85,16 +88,16 @@ public class Task implements Cloneable{
      * @throws IllegalArgumentException-if one of the arguments is negative or
      * the start time is bigger than the end time
      */
-    public void setTime(int start, int end, int interval) throws IllegalArgumentException{
-        if(start < 0 || end < 0 || interval < 0 || start > end)
+    public void setTime(LocalDateTime start, LocalDateTime end, int interval) throws IllegalArgumentException{
+        if(start == null || end == null || interval < 0 || start.isAfter(end))
             throw new IllegalArgumentException();
-        this.time=-1;
+        this.time=null;
         this.start=start;
         this.end=end;
         this.interval=interval;
     }
     public boolean isRepeated(){
-        return time == -1;
+        return interval == -1;
     }
 
     /**
@@ -102,24 +105,24 @@ public class Task implements Cloneable{
      * @param current The current time
      * @return Returns the next start time of the task execution after the current time.
      * If after the specified time the task is not executed
-     * anymore, the method will return -1
-     * @throws IllegalArgumentException-if the current time is negative
+     * anymore, the method will return null
+     * @throws NullPointerException-if the current time is null
      */
-    public int nextTimeAfter(int current) throws IllegalArgumentException{
-        if (current < 0)throw new IllegalArgumentException();
-        if (!isActive()){return -1;}
+    public LocalDateTime nextTimeAfter(LocalDateTime current) throws NullPointerException{
+        if (current == null)throw new NullPointerException();
+        if (!isActive()){return null;}
         if (isRepeated()){
-            int i = start;
-            while (i < end) {
-                if (i > current) {
-                    return i;
+            int hours = 0;
+            while (start.plusHours(hours).isBefore(end)) {
+                if (start.plusHours(hours).isAfter(current)) {
+                    return start.plusHours(hours);
                 }
-                i += interval;
+                hours += interval;
             }
-            return -1;
+            return null;
         }
         else
-            return (current < time)?time:-1;
+            return current.isBefore(time)?time:null;
     }
 
     @Override
@@ -142,13 +145,13 @@ public class Task implements Cloneable{
         Task task = (Task) obj;
         if(task.isRepeated()){
             return this.title.equals(task.title)&&
-                    this.start== task.start&&
-                    this.end == task.end&&
+                    this.start.isEqual(task.start)&&
+                    this.end.isEqual(task.end)&&
                     this.interval == task.interval&&
                     this.isActive() == task.isActive();
         }else{
             return this.title.equals(task.title)&&
-                    this.time == task.time&&
+                    this.time.isEqual(task.time)&&
                     this.isActive()==task.isActive();
         }
     }
@@ -157,13 +160,7 @@ public class Task implements Cloneable{
     @Override
     public Task clone() {
         try {
-            Task clone = (Task) super.clone();
-            clone.title = title;
-            clone.time = time;
-            clone.start = start;
-            clone.end = end;
-            clone.active = active;
-            return clone;
+            return (Task) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

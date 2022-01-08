@@ -1,20 +1,21 @@
 package mx.edu.j2se.gonzalez.tasks;
 
+import sun.util.resources.cldr.yav.LocaleNames_yav;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cloneable {
     Task[] taskList;
+    public final static ListTypes.types type = ListTypes.types.ARRAY;
 
     public ArrayTaskList(){
         this.length = 0;
-        this.typeList = ListTypes.types.ARRAY;
     }
 
     @Override
-    public void add(Task task) throws NullPointerException{
-        if(task == null){throw new NullPointerException();}
+    public void add(Task task){
         length += 1;
         Task[] tmpTaskList = new Task[size()];
         if (size() - 1 > 0)
@@ -24,8 +25,7 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
     }
 
     @Override
-    public boolean remove(Task task) throws NullPointerException{
-        if (task == null){throw new NullPointerException();}
+    public boolean remove(Task task){
         if (size() >= 1) {
             for (int i = 0; i < size() - 1; i++) {
                 if (task.equals(taskList[i])) {
@@ -45,11 +45,13 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
     }
 
     @Override
-    public Task getTask(int index) throws IndexOutOfBoundsException, IllegalArgumentException{
-        if (index>= size()){throw new IndexOutOfBoundsException();}
+    public Task getTask(int index) throws IllegalArgumentException{
         if(index<0){throw new IllegalArgumentException();}
         return taskList[index];
     }
+
+    @Override
+    ListTypes.types getType(){return type;}
 
     @Override
     Stream<Task> getStream() {
@@ -62,6 +64,17 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
         return i.iterator();
     }
 
+    @Override
+    public ArrayTaskList clone() {
+        try {
+            ArrayTaskList clone = (ArrayTaskList) super.clone();
+            clone.taskList = this.taskList.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
     protected class ArrayListIterator implements Iterable<Task>{
         private int pos;
         public ArrayListIterator(){ pos = 0;}
@@ -70,7 +83,7 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
             return new Iterator<Task>() {
                 @Override
                 public boolean hasNext() {
-                    return size()-1<pos;
+                    return size()-1>pos;
                 }
 
                 @Override
@@ -84,7 +97,7 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
     @Override
     public String toString(){
         StringBuilder s = new StringBuilder("Array List ");
-        for (Task task: taskList) s.append(task.toString());
+        for (Task task: taskList) s.append(task.toString()).append(" , ");
         return s.toString();
     }
 
@@ -97,22 +110,10 @@ public class ArrayTaskList extends AbstractTaskList implements Iterable<Task>,Cl
         Iterator<Task> it1 = this.iterator();
         Iterator<Task> it2 = ATL.iterator();
         while (it1.hasNext() && it2.hasNext()){
-            if(it1.next() != it2.next())
+            if(!it1.next().equals(it2.next()))
                 return false;
         }
         return this.taskList[0].equals(ATL.taskList[0]);
     }
 
-    @Override
-    public ArrayTaskList clone() {
-        try {
-            ArrayTaskList clone = (ArrayTaskList) super.clone();
-            for (Task task: taskList) {
-                clone.add(task.clone());
-            }
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
-    }
 }

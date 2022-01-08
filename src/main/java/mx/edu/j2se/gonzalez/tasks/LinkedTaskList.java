@@ -1,11 +1,14 @@
 package mx.edu.j2se.gonzalez.tasks;
 
+import sun.util.resources.cldr.yav.LocaleNames_yav;
+
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,Cloneable{
     Node first;
     Node last;
+    public final static ListTypes.types type = ListTypes.types.LINKED;
     private class Node {
         Task task;
         Node next;
@@ -13,7 +16,6 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
 
     public LinkedTaskList(){
         this.length = 0;
-        this.typeList = ListTypes.types.LINKED;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
                 last = last.next;
                 last.task = task;
             }
-            last.next = first;
+            last.next = null;
         }
     }
 
@@ -76,13 +78,14 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
     }
 
     @Override
+    ListTypes.types getType(){return type;}
+
+    @Override
     public Stream<Task> getStream(){
         Stream.Builder<Task> builder = Stream.builder();
         Iterator<Task> it = this.iterator();
         builder.add(first.task);
-        while(it.hasNext()){
-            builder.add(it.next());
-        }
+        it.forEachRemaining(builder::add);
         return builder.build();
     }
 
@@ -102,7 +105,7 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
             return new Iterator<Task>() {
                 @Override
                 public boolean hasNext() {
-                    return current.next!=first;
+                    return current.next!=null;
                 }
 
                 @Override
@@ -118,7 +121,7 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
     public String toString(){
         StringBuilder s = new StringBuilder("Linked List ");
         for (Task task: this) {
-            s.append(task.toString());
+            s.append(task.toString()).append(" , ");
         }
         return s.toString();
     }
@@ -132,7 +135,7 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
         Iterator<Task> it1 = this.iterator();
         Iterator<Task> it2 = ATL.iterator();
         while (it1.hasNext() && it2.hasNext()){
-            if(it1.next() != it2.next())
+            if(!it1.next().equals(it2.next()))
                 return false;
         }
         return this.first.task.equals(ATL.first.task);
@@ -143,7 +146,9 @@ public class LinkedTaskList extends AbstractTaskList implements Iterable<Task>,C
         try {
             LinkedTaskList clone = (LinkedTaskList) super.clone();
             Iterator<Task> it = this.iterator();
-            clone.add(first.task.clone());
+            clone.first = null;
+            clone.last = null;
+            clone.add(this.first.task.clone());
             while (it.hasNext()) {
                 clone.add(it.next().clone());
             }
